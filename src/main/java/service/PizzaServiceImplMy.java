@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class PizzaServiceImplMy implements PizzaService{
+public class PizzaServiceImplMy implements PizzaService {
     @Override
     public double getPizzaPrice(Pizza pizza) {
         return pizza.getIngredients().stream().mapToInt(Ingredient::getPrice).sum();
@@ -52,7 +52,7 @@ public class PizzaServiceImplMy implements PizzaService{
                         .stream()
                         .anyMatch(Ingredient::isMeat))
                 .sorted(Comparator.comparing(pizza -> pizza.getIngredients().size(), Comparator.reverseOrder()))
-                        .collect(Collectors.toList());
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -71,7 +71,15 @@ public class PizzaServiceImplMy implements PizzaService{
     @Override
     public String getMenu() {
         return Arrays.stream(Pizza.values())
-                .map(Pizza::getName)
-                        .collect(Collectors.joining("\n"));
+                .map(pizza -> String.format("| %30s | %10s | %10s | %5.2f zł | %-100s |",
+                        pizza.getName(),
+                        pizza.getIngredients().stream().anyMatch(Ingredient::isSpicy) ? "spicy" : "non-spicy",
+                        pizza.getIngredients().stream().anyMatch(Ingredient::isMeat) ? "non-vege" : "vege",
+                        this.getPizzaPrice(pizza),
+                        pizza.getIngredients()
+                                .stream()
+                                .map(Ingredient::getName)
+                                .collect(Collectors.joining(", "))))
+                .collect(Collectors.joining("\n"));
     }
 }
